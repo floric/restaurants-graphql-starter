@@ -1,0 +1,15 @@
+{
+  "name": "restaurants",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "start-client": "cd client && yarn run start"
+  },
+  "author": "Florian Richter",
+  "license": "MIT"
+}
