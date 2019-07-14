@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC } from 'react';
+import { ApolloProvider } from 'react-apollo';
+import { ApolloClient } from 'apollo-client'
+import { InMemoryCache } from "apollo-cache-inmemory";
+import { createHttpLink } from "apollo-link-http";
+import gql from 'graphql-tag';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import './App.css';
+import { ContentQuery } from './util/content-query';
+
+const GET_RESTAURANTS = gql`
+ {
+   restaurants {
+     title
+     description
+     ratingsCount
+     creationDate
+   }
+ }
+`;
+
+const client = new ApolloClient({
+  cache: new InMemoryCache({
+    freezeResults: true
+  }),
+  assumeImmutableResults: true,
+  link: createHttpLink({
+    uri: "http://localhost:3030/api"
+  })
+});
+
+const App: FC = () => (
+  <ApolloProvider client={client}>
+    <ContentQuery<{ restaurants: Array<{ title: string }> }> query={GET_RESTAURANTS}>
+      {res => res.restaurants.map(n => <div>{n.title}</div>)}
+    </ContentQuery>
+  </ApolloProvider>
+);
 
 export default App;

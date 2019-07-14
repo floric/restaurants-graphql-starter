@@ -12,7 +12,7 @@ if (typeof window === "undefined") {
 }
 
 const startServer = () => {
-    const port = Number.parseInt(process.env.PORT || "3000");
+    const port = Number.parseInt(process.env.PORT || "3030");
 
     const server = new ApolloServer({
         context,
