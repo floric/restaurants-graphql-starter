@@ -11,13 +11,33 @@ scalar DateTime
 type Query {
   restaurant(title: String!): Restaurant
   restaurants: [Restaurant!]!
+  rating(id: String!): Rating
+  user(id: String!): User
+}
+
+type Rating {
+  id: ID!
+  title: String!
+  description: String
+  value: Int!
+  creationDate: DateTime!
+  user: User!
 }
 
 type Restaurant {
+  id: ID!
   title: String!
   description: String
-  ratings: [Int!]!
   creationDate: DateTime!
-  ratingsCount(minRate: Int = 0): Int!
+  ratingsCount: Int!
   averageRating: Float
+  ratings(minRate: Int = 0): [Rating!]!
+}
+
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  registrationDate: DateTime!
+  ratings: [Rating!]!
 }
