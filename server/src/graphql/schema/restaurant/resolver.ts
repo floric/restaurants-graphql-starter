@@ -7,23 +7,22 @@ import {
   ResolverInterface,
   Int
 } from "type-graphql";
+import { v4 as generateUuid } from "uuid";
+import faker from "faker";
 
 import { Restaurant } from "./type";
 import { Rating } from "../rating/type";
 
-const a = new Restaurant();
-a.title = "Best ever";
-a.id = "abcde";
-a.creationDate = new Date();
-
-const b = new Restaurant();
-b.title = "Worsed ever";
-b.id = "12345";
-b.creationDate = new Date(2014, 1, 1);
-
 @Resolver(() => Restaurant)
 export class RestaurantResolver implements ResolverInterface<Restaurant> {
-  private readonly items: Restaurant[] = [a, b];
+  private readonly items: Restaurant[] = new Array(100).fill(0).map(() => {
+    const n = new Restaurant();
+    n.creationDate = faker.date.past(2018);
+    n.description = faker.lorem.paragraph(20);
+    n.title = faker.commerce.product();
+    n.id = generateUuid();
+    return n;
+  });
 
   @Query(() => Restaurant, { nullable: true })
   public async restaurant(
@@ -50,9 +49,7 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
   }
 
   @FieldResolver()
-  public ratingsCount(
-    @Root() _: Restaurant
-  ): number {
+  public ratingsCount(@Root() _: Restaurant): number {
     return 123;
   }
 }
