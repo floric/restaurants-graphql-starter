@@ -6,6 +6,6 @@ import { RatingResolver } from "./schema/rating/resolver";
 import { UserResolver } from "./schema/user/resolver";
 
 export const schema: GraphQLSchema = buildSchemaSync({
-    resolvers: [RestaurantResolver, RatingResolver, UserResolver],
-    emitSchemaFile: "schema.gql"
+  resolvers: [RestaurantResolver, RatingResolver, UserResolver],
+  emitSchemaFile: "schema.gql"
 });

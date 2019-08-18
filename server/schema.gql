@@ -10,7 +10,7 @@ scalar DateTime
 
 type Query {
   restaurant(title: String!): Restaurant
-  restaurants: [Restaurant!]!
+  restaurants: [RestaurantResponse!]!
   rating(id: String!): Rating
   user(id: String!): User
 }
@@ -32,6 +32,12 @@ type Restaurant {
   ratingsCount: Int!
   averageRating: Float
   ratings(minRate: Int = 0): [Rating!]!
+}
+
+type RestaurantResponse {
+  items: [Restaurant!]!
+  total: Int!
+  hasMore: Boolean!
 }
 
 type User {

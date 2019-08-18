@@ -5,13 +5,18 @@ import {
   Root,
   Arg,
   ResolverInterface,
-  Int
+  Int,
+  ObjectType
 } from "type-graphql";
 import { v4 as generateUuid } from "uuid";
 import faker from "faker";
 
 import { Restaurant } from "./type";
 import { Rating } from "../rating/type";
+import { PaginatedResponse } from "../util";
+
+@ObjectType()
+class RestaurantResponse extends PaginatedResponse(Restaurant) {}
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver implements ResolverInterface<Restaurant> {
@@ -31,7 +36,7 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
     return await this.items.find(a => a.title === title);
   }
 
-  @Query(() => [Restaurant])
+  @Query(() => [RestaurantResponse])
   public async restaurants(): Promise<Restaurant[]> {
     return await this.items;
   }
