@@ -5,56 +5,79 @@ import {
   Root,
   Arg,
   ResolverInterface,
-  Int,
-  ObjectType
+  Args
 } from "type-graphql";
-import { v4 as generateUuid } from "uuid";
-import faker from "faker";
+import { plainToClass } from "class-transformer";
 
-import { Restaurant } from "./type";
-import { Rating } from "../rating/type";
-import { PaginatedResponse } from "../util";
-
-@ObjectType()
-class RestaurantResponse extends PaginatedResponse(Restaurant) {}
+import { Restaurant, RestaurantResponse } from "./type";
+import {
+  fetchRatingsForRestaurant,
+  fetchAvgRatingForRestaurant
+} from "../../persistence/ratings";
+import {
+  fetchRestaurants,
+  findRestaurantByTitle
+} from "../../persistence/restaurants";
+import { fetchOffersForRestaurant } from "../../persistence/offer";
+import { RatingsResponse, Rating } from "../rating/type";
+import { OffersResponse } from "../offer/type";
+import { PaginatedListInput } from "../util";
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver implements ResolverInterface<Restaurant> {
-  private readonly items: Restaurant[] = new Array(100).fill(0).map(() => {
-    const n = new Restaurant();
-    n.creationDate = faker.date.past(2018);
-    n.description = faker.lorem.paragraph(20);
-    n.title = faker.commerce.product();
-    n.id = generateUuid();
-    return n;
-  });
-
   @Query(() => Restaurant, { nullable: true })
   public async restaurant(
     @Arg("title") title: string
   ): Promise<Restaurant | undefined> {
-    return await this.items.find(a => a.title === title);
+    return plainToClass(Restaurant, findRestaurantByTitle(title));
   }
 
-  @Query(() => [RestaurantResponse])
-  public async restaurants(): Promise<Restaurant[]> {
-    return await this.items;
+  @Query(() => RestaurantResponse)
+  public async restaurants(): Promise<RestaurantResponse> {
+    const { items, total } = fetchRestaurants();
+    return {
+      items: items.map(n => plainToClass(Restaurant, n)),
+      hasMore: false,
+      total
+    };
   }
 
-  @FieldResolver(() => [Rating])
+  @FieldResolver(() => RatingsResponse)
   public ratings(
-    @Root() _: Restaurant,
-    @Arg("minRate", () => Int, { defaultValue: 0.0 }) __: number
-  ): Rating[] {
-    const ratingA = new Rating();
-    ratingA.id = "abc";
-    ratingA.title = "Horrible experience";
-    ratingA.value = 1;
-    return [ratingA];
+    @Root() restaurant: Restaurant,
+    @Args() { page, pageSize }: PaginatedListInput
+  ): RatingsResponse {
+    const { items, total } = fetchRatingsForRestaurant(
+      restaurant.id,
+      page,
+      pageSize
+    );
+    return {
+      items: items.map(n => plainToClass(Rating, n)),
+      hasMore: false,
+      total
+    };
+  }
+
+  @FieldResolver(() => OffersResponse)
+  public offers(
+    @Root() restaurant: Restaurant,
+    @Args() { page, pageSize }: PaginatedListInput
+  ): RatingsResponse {
+    const { items, total } = fetchOffersForRestaurant(
+      restaurant.id,
+      page,
+      pageSize
+    );
+    return {
+      items: items.map(n => plainToClass(Rating, n)),
+      hasMore: false,
+      total
+    };
   }
 
   @FieldResolver()
-  public ratingsCount(@Root() _: Restaurant): number {
-    return 123;
+  public averageRating(@Root() restaurant: Restaurant): number {
+    return fetchAvgRatingForRestaurant(restaurant.id);
   }
 }

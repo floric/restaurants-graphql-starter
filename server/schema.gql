@@ -8,11 +8,26 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+type Offer {
+  id: ID!
+  title: String!
+  description: String!
+  validUntilDate: DateTime!
+  restaurant: Restaurant!
+}
+
+type OffersResponse {
+  items: [Offer!]!
+  total: Int!
+  hasMore: Boolean!
+}
+
 type Query {
   restaurant(title: String!): Restaurant
-  restaurants: [RestaurantResponse!]!
+  restaurants: RestaurantResponse!
   rating(id: String!): Rating
   user(id: String!): User
+  offer(id: String!): Offer
 }
 
 type Rating {
@@ -22,6 +37,13 @@ type Rating {
   value: Int!
   creationDate: DateTime!
   user: User!
+  restaurant: Restaurant!
+}
+
+type RatingsResponse {
+  items: [Rating!]!
+  total: Int!
+  hasMore: Boolean!
 }
 
 type Restaurant {
@@ -29,9 +51,9 @@ type Restaurant {
   title: String!
   description: String
   creationDate: DateTime!
-  ratingsCount: Int!
   averageRating: Float
-  ratings(minRate: Int = 0): [Rating!]!
+  ratings(page: Int = 0, pageSize: Int = 20): RatingsResponse!
+  offers(page: Int = 0, pageSize: Int = 20): OffersResponse!
 }
 
 type RestaurantResponse {
