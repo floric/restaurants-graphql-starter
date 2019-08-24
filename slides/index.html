@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>GraphQL</title>
+
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/reveal.css" />
+    <link rel="stylesheet" href="css/theme/white.css" />
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css" />
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      link.href = window.location.search.match(/print-pdf/gi)
+        ? "css/print/pdf.css"
+        : "css/print/paper.css";
+      document.getElementsByTagName("head")[0].appendChild(link);
+    </script>
+  </head>
+
+  <body>
+    <div class="reveal" style="font-size: 160%;">
+      <div class="slides">
+        <section>
+          <section data-markdown>
+            <textarea data-template>
+## GraphQL
+
+Ein Bindeglied mit großem Potenzial
+
+29.08.2019 | Florian Richter, Capgemini
+			</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Inhalt
+
+1. Ankommen
+1. Einordnen
+	* REST, gRPC, OData
+1. Kennenlernen
+	* Schema
+	* Queries
+	* Mutations
+1. Anwenden
+1. Abschließen & Nachfragen
+				</textarea
+            >
+          </section>
+        </section>
+        <section>
+          <h2>GraphQL</h2>
+          <div class="fragment" style="display: flex; align-items: flex-start;">
+            <img
+              data-src="./media/graphql_logo.png"
+              style="width: 25%; border: none;"
+            />
+            <img
+              data-src="./media/appsync.jpeg"
+              style="width: 25%;  border: none;"
+            />
+            <img
+              data-src="./media/apollo.png"
+              style="width: 25%;  border: none;"
+            />
+            <img
+              data-src="./media/relay.jpeg"
+              style="width: 25%;  border: none;"
+            />
+          </div>
+          <p class="fragment">REST-Nachfolger?</p>
+          <p class="fragment">Hyped Buzzword?</p>
+          <p class="fragment">"Enterprisefähig"?</p>
+        </section>
+        <section>
+          <section data-markdown>
+            <textarea data-template>
+## Beispielanwendung
+
+* Entwicklung einer Plattform für Restaurant-Empfehlungen für die Mittagspause
+* Separate Teams für...
+	* Backend-Funktionen (Empfehlungen, Bewertungen, Administration)
+	* Clients (Web, Android-App)
+* Nutzerziele:
+
+| Nutzer 	| Ziele 	|
+|--------	|--------	|
+| Nutzer 	| nach Restaurants in der Nähe suchen 	|
+| Angemeldete Nutzer	| Lokalitäten bewerten 	|
+| Inhaber 	| Auf Bewertungen reagieren, Angebote einstellen 	|
+			</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Entitäten
+
+* *Restaurant*
+* *Offer*: Angebot eines Restaurants
+* *Rating*: Bewertung eines Restaurans
+* *User*: Nutzer, welcher Bewertungen angeben kann
+			</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Mögliche REST-API
+
+| Endpunkt 	| Inhalt 	|
+|--------	|--------	|
+| **GET** /api/recommendation/ |Zufällige Empfehlung|
+| **GET/PUT** /api/restaurants/ |Suche nach Restaurants|
+| **GET/DELETE/PATCH** /api/restaurants/{id} |Details eines Restaurans|
+| **GET/PUT** /api/restaurants/{id}/offers |Angebote eines Restaurants|
+| **GET/DELETE/PATCH** /api/restaurants/{id}/offers/{id} |Details eines Angebots|
+| **GET/PUT** /api/restaurants/{id}/ratings |Bewertungen eines Restaurants|
+| **GET/DELETE/PATCH** /api/restaurants/{id}/ratings/{id} |Details einer Bewertung|
+| **GET** /api/user/{id}|Detail eines Nutzers|
+| **GET** /api/user/{id}/ratings|Bewertungen eines Nutzers|
+				</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Probleme mit REST
+
+* Mehrere Endpunkte
+* Aufbau spiegelt nicht zwangsläufig fachliche Beziehungen wider
+* Entwicklung der API meist unabhängig vom Frontend
+  * Over- und Underfetching
+  * Verkettete Requests kosten Zeit und Bandbreite
+					</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Mögliche Lösung mit HATEOAS
+#### (Hypermedia As The Engine Of Application State)
+
+* Einzelner Endpunkt
+* Abbildung von Relationen und Aktionen über **Links**
+
+```json
+GET /api
+
+{
+  "_links": {
+    "self": { "href": "/api" },
+    "recommendation": { "href": "/api/recommendations" },
+    "restaurants": { "href": "/api/restaurants" },
+    "user": { "href": "/api/user" },
+  }
+}
+```
+					</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+Navigiere zu *restaurants*:
+
+```json
+{
+  "_links": {
+    "self": { "href": "/api/restaurants" },
+    "restaurant": {
+      "href": "/api/restaurants/{id}",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" }
+        }
+      }
+    },
+    "create": {
+      "href": "/api/restaurants",
+      "method" : "PUT",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+```
+					</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+Navigiere zu *restaurant* mit: `{ "id": "123"}`
+```json
+{
+  "_links": {
+    "self": { "href": "/api/restaurants/123" },
+    "ratings": { "href": "/api/restaurants/123/ratings" },
+    "offers": { "href": "/api/restaurants/123/offers" },
+    "update": {
+      "href": "/api/restaurants/123",
+      "method" : "PATCH",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        }
+      }
+    },
+    "delete": {
+      "href": "/api/restaurants/123",
+      "method" : "DELETE"
+    }
+  }
+}
+```
+					</textarea
+            >
+          </section>
+        </section>
+        <section>
+          <section data-markdown>
+            <textarea data-template>
+## Einführung in GraphQL
+
+* Typisierte API-Abfragefragesprache (inkl. Modifikation...) und Ökosystem
+* entwickelt von Facebook, 2015 opensourced, seitdem verwaltet durch GraphQL Foundation
+* Zugriff auf Inhalte über einen einzigen Endpunkt
+* Umfasst auch Validierung der Eingaben sowie Umgang mit Fehlern
+* Rückgabeformat und Transportmittel nicht definiert
+
+Spec: https://graphql.github.io/graphql-spec/
+			</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Schemadefinition
+* Beschreibung der Felder der Entitäten sowie deren Relation zueinander
+* Vordefinierte, skalare Typen: `String`, `Int`, `Float`, `Boolean`, `ID`
+* Erweiterbarkeit mit selbst definierten Skalaren
+* Unterstützung von Arrays sowie Enums
+* `!`-Operator für Non-Null
+* Definition von Entitäten mit `type` sowie `interface`
+
+            </textarea>
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Schema des Beispiels
+```
+scalar DateTime
+
+type Query {
+  recommendation: Restaurant!
+  restaurant(id: String!): Restaurant
+  restaurants: [Restaurant!]!
+  rating(id: String!): Rating
+  currentUser: User
+}
+
+type Restaurant {
+  id: ID!
+  title: String!
+  description: String
+  creationDate: DateTime!
+  ratingsCount: Int!
+  averageRating: Float
+  ratings(minRate: Int = 0): [Rating!]!
+}
+
+type Rating {
+  id: ID!
+  title: String!
+  description: String
+  value: Int!
+  creationDate: DateTime!
+  user: User!
+}
+
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  ratings: [Rating!]!
+}
+```</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Operationen
+* Queries
+* Mutations
+* Subscriptions
+
+</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+## Query
+### Liste von Restaurants und Nutzer
+
+```
+{
+  restaurants {
+    id
+    title
+    ratings {
+      value
+    }
+    offers {
+      expirationDate
+    }
+  }
+  currentUser {
+    id
+    firstName
+    lastName
+  }
+}
+```
+
+Ergebnis:
+```
+{
+ "restaurants": [
+  {
+   "id": "abc",
+   "title": "test",
+   "ratings": [{"value": 5}, {"value": 3}],
+   "offers": []
+  }
+ ],
+ "currentUser": null
+}
+```
+</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Detail eines Restaurants
+
+```
+query restaurantDetail($id: ID!) {
+  restaurant(id: $id) {
+    id
+    title
+    ratings {
+      value
+    }
+  }
+}
+```
+
+Ergebnis:
+```
+{
+  "restaurant": {
+    "id": "abc",
+    "title": "test",
+    "ratings": [{"value": 5}, {"value": 3}]
+  }
+}
+```
+</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+## Mutation
+### Restaurant erstellen	
+```
+mutation createRestaurant($res: CreateRestaurantInput!) {
+  createRestaurant(restaurant: $res) {
+    id
+    title
+  }
+}
+```
+mit Payload:
+```json
+{
+  "title": "Fancy restaurant",
+  "description": "The fancy address in Erfurt!"
+}
+```
+	</textarea
+            >
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Probleme und Limitationen</h2>
+            <ul>
+              <li>
+                Schwieriges Caching mit POST
+                <span class="fragment" data-fragment-index="2"
+                  >→ <b>Queries mit GET, Mutations mit POST</b></span
+                >
+              </li>
+              <li>
+                Komplexe POST-Bodies
+                <span class="fragment" data-fragment-index="3"
+                  >→ <b>Persisted-Queries</b></span
+                >
+              </li>
+              <li>
+                Deep, nested Queries
+                <span class="fragment" data-fragment-index="4"
+                  >→ <b>Komplexitätsgrenzen oder Timeouts</b></span
+                >
+              </li>
+              <li>
+                Viele Komponenten mit parallelen Requests
+                <span class="fragment" data-fragment-index="5"
+                  >→ <b>Query-Batching</b></span
+                >
+              </li>
+            </ul>
+            <p class="fragment" data-fragment-index="1">
+              <b>Evolving Ecosystem for the Rescue!</b>
+            </p>
+          </section>
+          <section>
+            <h2>Kein Swiss Army Knife!</h2>
+            <ul>
+              <li class="fragment">
+                Nicht empfehlenswert bei Server-Server-Kommunikation
+                (Microservices)
+              </li>
+              <li class="fragment">
+                Relativ junge Technologie erfordert Mut und ein wenig
+                Risikobereitschaft
+              </li>
+              <li class="fragment">
+                Server-Implementierung außerhalb der NodeJS-Welt weniger erprobt
+              </li>
+              <li class="fragment">Single Point of Failure</li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <section data-markdown>
+            <textarea data-template>
+## Zeit für Fragen.
+            </textarea>
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+## Getting Started
+* Offizielle Einführung: https://graphql.org
+* Tutorials: https://www.howtographql.com
+* Apollo Ökosystem: https://www.apollographql.com
+* Einführung in HATEOAS: https://restfulapi.net/hateoas/
+				  </textarea
+            >
+          </section>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+      Reveal.initialize({
+        hash: true,
+        history: true,
+        display: "block",
+        dependencies: [
+          { src: "plugin/markdown/marked.js" },
+          { src: "plugin/markdown/markdown.js" },
+          { src: "plugin/notes/notes.js", async: true },
+          { src: "plugin/highlight/highlight.js", async: true }
+        ]
+      });
+    </script>
+  </body>
+</html>
