@@ -1,33 +1,23 @@
-import { PaginatedReponse } from "./util";
+import { findPaginated, getById } from "./util";
 
 export type PersistedOffer = {
-  id: string;
   title: string;
   description: string;
   validUntilDate: Date;
   restaurantId: string;
 };
 
-export const fetchOfferById = (ratingId: string): PersistedOffer => ({
-  id: ratingId,
-  title: "abc",
-  description: "test",
-  restaurantId: "test",
-  validUntilDate: new Date()
-});
+export const fetchOfferById = (ratingId: string) =>
+  getById<PersistedOffer>(ratingId);
 
 export const fetchOffersForRestaurant = (
   restaurantId: string,
   page: number,
   count: number
-): PaginatedReponse<PersistedOffer> => {
-  const items: Array<PersistedOffer> = Array(count).map(() => ({
-    id: "abc",
-    title: "headline",
-    description: "test",
-    restaurantId,
-    validUntilDate: new Date()
-  }));
-
-  return { items, page, pageCount: count, total: items.length };
-};
+) =>
+  findPaginated<PersistedOffer>({
+    type: "offer",
+    page,
+    count,
+    selector: { restaurantId }
+  });

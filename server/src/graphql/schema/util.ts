@@ -6,9 +6,6 @@ export const PaginatedResponse = <TItem>(TItemClass: ClassType<TItem>) => {
     @Field(() => [TItemClass])
     items: TItem[];
 
-    @Field(() => Int)
-    total: number;
-
     @Field()
     hasMore: boolean;
   }

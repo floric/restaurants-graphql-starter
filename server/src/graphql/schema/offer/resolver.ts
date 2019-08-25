@@ -16,11 +16,14 @@ import { fetchOfferById } from "../../persistence/offer";
 export class OfferResolver implements ResolverInterface<Offer> {
   @Query(() => Offer, { nullable: true })
   public async offer(@Arg("id") id: string): Promise<Offer | undefined> {
-    return plainToClass(Offer, fetchOfferById(id));
+    return plainToClass(Offer, await fetchOfferById(id));
   }
 
   @FieldResolver()
-  public restaurant(@Root() offer: Offer): Restaurant {
-    return plainToClass(Restaurant, findRestaurantById(offer.restaurant.id));
+  public async restaurant(@Root() offer: Offer): Promise<Restaurant> {
+    return plainToClass(
+      Restaurant,
+      await findRestaurantById(offer.restaurant.id)
+    );
   }
 }

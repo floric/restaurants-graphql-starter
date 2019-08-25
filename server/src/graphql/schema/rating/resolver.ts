@@ -18,16 +18,19 @@ import { findRestaurantById } from "../../persistence/restaurants";
 export class RatingResolver implements ResolverInterface<Rating> {
   @Query(() => Rating, { nullable: true })
   public async rating(@Arg("id") id: string): Promise<Rating | undefined> {
-    return plainToClass(Rating, fetchRatingById(id));
+    return plainToClass(Rating, await fetchRatingById(id));
   }
 
   @FieldResolver()
-  public user(@Root() rating: Rating): User {
-    return plainToClass(User, fetchUserById(rating.user.id));
+  public async user(@Root() rating: Rating): Promise<User> {
+    return plainToClass(User, await fetchUserById(rating.user.id));
   }
 
   @FieldResolver()
-  public restaurant(@Root() rating: Rating): Restaurant {
-    return plainToClass(Restaurant, findRestaurantById(rating.restaurant.id));
+  public async restaurant(@Root() rating: Rating): Promise<Restaurant> {
+    return plainToClass(
+      Restaurant,
+      await findRestaurantById(rating.restaurant.id)
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Field, Float, ID, ObjectType } from "type-graphql";
+import { Field, Float, ID, ObjectType, InputType } from "type-graphql";
 import { PaginatedResponse } from "../util";
 
 @ObjectType()
@@ -25,3 +25,12 @@ export class Restaurant {
 
 @ObjectType()
 export class RestaurantResponse extends PaginatedResponse(Restaurant) {}
+
+@InputType()
+export class CreateRestaurantInput {
+  @Field(() => String)
+  title: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string;
+}

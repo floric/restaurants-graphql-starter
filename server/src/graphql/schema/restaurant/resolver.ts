@@ -5,18 +5,20 @@ import {
   Root,
   Arg,
   ResolverInterface,
-  Args
+  Args,
+  Mutation
 } from "type-graphql";
 import { plainToClass } from "class-transformer";
 
-import { Restaurant, RestaurantResponse } from "./type";
+import { Restaurant, RestaurantResponse, CreateRestaurantInput } from "./type";
 import {
   fetchRatingsForRestaurant,
   fetchAvgRatingForRestaurant
 } from "../../persistence/ratings";
 import {
   fetchRestaurants,
-  findRestaurantByTitle
+  findRestaurantByTitle,
+  createRestaurant
 } from "../../persistence/restaurants";
 import { fetchOffersForRestaurant } from "../../persistence/offer";
 import { RatingsResponse, Rating } from "../rating/type";
@@ -34,50 +36,54 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
 
   @Query(() => RestaurantResponse)
   public async restaurants(): Promise<RestaurantResponse> {
-    const { items, total } = fetchRestaurants();
+    const { items } = await fetchRestaurants();
     return {
       items: items.map(n => plainToClass(Restaurant, n)),
-      hasMore: false,
-      total
+      hasMore: false
     };
   }
 
   @FieldResolver(() => RatingsResponse)
-  public ratings(
+  public async ratings(
     @Root() restaurant: Restaurant,
     @Args() { page, pageSize }: PaginatedListInput
-  ): RatingsResponse {
-    const { items, total } = fetchRatingsForRestaurant(
+  ): Promise<RatingsResponse> {
+    const { items } = await fetchRatingsForRestaurant(
       restaurant.id,
       page,
       pageSize
     );
     return {
       items: items.map(n => plainToClass(Rating, n)),
-      hasMore: false,
-      total
+      hasMore: false
     };
   }
 
   @FieldResolver(() => OffersResponse)
-  public offers(
+  public async offers(
     @Root() restaurant: Restaurant,
     @Args() { page, pageSize }: PaginatedListInput
-  ): RatingsResponse {
-    const { items, total } = fetchOffersForRestaurant(
+  ): Promise<RatingsResponse> {
+    const { items } = await fetchOffersForRestaurant(
       restaurant.id,
       page,
       pageSize
     );
     return {
       items: items.map(n => plainToClass(Rating, n)),
-      hasMore: false,
-      total
+      hasMore: false
     };
   }
 
   @FieldResolver()
   public averageRating(@Root() restaurant: Restaurant): number {
     return fetchAvgRatingForRestaurant(restaurant.id);
+  }
+
+  @Mutation(() => Restaurant)
+  public createRestaurant(
+    @Arg("createInput") createInput: CreateRestaurantInput
+  ) {
+    return createRestaurant(createInput);
   }
 }

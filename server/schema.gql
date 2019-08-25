@@ -3,10 +3,19 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input CreateRestaurantInput {
+  title: String!
+  description: String
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+type Mutation {
+  createRestaurant(createInput: CreateRestaurantInput!): Restaurant!
+}
 
 type Offer {
   id: ID!
@@ -18,7 +27,6 @@ type Offer {
 
 type OffersResponse {
   items: [Offer!]!
-  total: Int!
   hasMore: Boolean!
 }
 
@@ -42,7 +50,6 @@ type Rating {
 
 type RatingsResponse {
   items: [Rating!]!
-  total: Int!
   hasMore: Boolean!
 }
 
@@ -58,7 +65,6 @@ type Restaurant {
 
 type RestaurantResponse {
   items: [Restaurant!]!
-  total: Int!
   hasMore: Boolean!
 }
 

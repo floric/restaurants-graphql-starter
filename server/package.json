@@ -9,6 +9,8 @@
         "fastify": "^2.7.1",
         "graphql": "^14.4.2",
         "pino": "^5.13.2",
+        "pouchdb": "^7.1.1",
+        "pouchdb-find": "^7.1.1",
         "type-graphql": "^0.17.5",
         "uuid": "^3.3.2"
     },
@@ -16,6 +18,8 @@
         "@types/faker": "^4.1.5",
         "@types/graphql": "^14.2.3",
         "@types/pino": "^5.8.9",
+        "@types/pouchdb": "^6.4.0",
+        "@types/pouchdb-find": "^6.3.4",
         "@types/uuid": "^3.4.5",
         "pino-pretty": "^3.2.1",
         "reflect-metadata": "^0.1.13",

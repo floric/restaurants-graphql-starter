@@ -1,3 +1,5 @@
+import { getById } from "./util";
+
 export type PersistedUser = {
   id: string;
   firstName: string;
@@ -5,12 +7,4 @@ export type PersistedUser = {
   registrationDate: Date;
 };
 
-export const fetchUserById = (userId: string) => {
-  const user: PersistedUser = {
-    id: userId,
-    firstName: "Florian",
-    lastName: "Richter",
-    registrationDate: new Date()
-  };
-  return user;
-};
+export const fetchUserById = (userId: string) => getById<PersistedUser>(userId);
