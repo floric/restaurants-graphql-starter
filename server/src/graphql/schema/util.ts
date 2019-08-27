@@ -7,7 +7,10 @@ export const PaginatedResponse = <TItem>(TItemClass: ClassType<TItem>) => {
     items: TItem[];
 
     @Field()
-    hasMore: boolean;
+    page: number;
+
+    @Field()
+    pageSize: number;
   }
   return PaginatedResponseClass;
 };

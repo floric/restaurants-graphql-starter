@@ -38,5 +38,5 @@ export const createRestaurant = ({
       description,
       userId
     },
-    "user"
+    "restaurant"
   );

@@ -6,7 +6,6 @@
 input CreateOfferInput {
   title: String!
   description: String!
-  validUntilDate: DateTime!
   restaurantId: String!
 }
 
@@ -37,13 +36,13 @@ type Offer {
   id: ID!
   title: String!
   description: String!
-  validUntilDate: DateTime!
   restaurant: Restaurant!
 }
 
 type OffersResponse {
   items: [Offer!]!
-  hasMore: Boolean!
+  page: Float!
+  pageSize: Float!
 }
 
 type Query {
@@ -66,7 +65,8 @@ type Rating {
 
 type RatingsResponse {
   items: [Rating!]!
-  hasMore: Boolean!
+  page: Float!
+  pageSize: Float!
 }
 
 type Restaurant {
@@ -81,7 +81,8 @@ type Restaurant {
 
 type RestaurantResponse {
   items: [Restaurant!]!
-  hasMore: Boolean!
+  page: Float!
+  pageSize: Float!
 }
 
 type User {
@@ -89,5 +90,5 @@ type User {
   firstName: String!
   lastName: String!
   registrationDate: DateTime!
-  ratings: [Rating!]!
+  ratings(page: Int = 0, pageSize: Int = 20): RatingsResponse!
 }

@@ -1,6 +1,8 @@
 import { Field, ObjectType, ID, InputType } from "type-graphql";
 import { Restaurant } from "../restaurant/type";
 import { PaginatedResponse } from "../util";
+import { MinLength } from "class-validator";
+import { PersistedRestaurant } from "../../persistence/restaurants";
 
 @ObjectType()
 export class Offer {
@@ -13,11 +15,8 @@ export class Offer {
   @Field(() => String)
   description: string;
 
-  @Field(() => Date)
-  validUntilDate: Date;
-
   @Field(() => Restaurant)
-  restaurant: Restaurant;
+  restaurant: PersistedRestaurant;
 }
 
 @ObjectType()
@@ -26,13 +25,12 @@ export class OffersResponse extends PaginatedResponse(Offer) {}
 @InputType()
 export class CreateOfferInput {
   @Field(() => String)
+  @MinLength(8, { message: "Title should have at least 8 characters" })
   title: string;
 
   @Field(() => String)
+  @MinLength(8, { message: "Description should have at least 8 characters" })
   description: string;
-
-  @Field(() => Date)
-  validUntilDate: Date;
 
   @Field(() => String)
   restaurantId: string;

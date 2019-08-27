@@ -1,16 +1,4 @@
-import PouchDB from "pouchdb";
-import PouchDBFind from "pouchdb-find";
-
-const DB_NAME = "localDB";
-
-PouchDB.plugin(PouchDBFind);
-
-const db = new PouchDB<any>(DB_NAME);
-db.createIndex({ index: { name: "restaurantId", fields: ["restaurantId"] } });
-
-const getDb: <T>() => PouchDB.Database<T> = () => {
-  return db;
-};
+import { getDb } from "./db";
 
 export type EntityType = "offer" | "rating" | "restaurant" | "user";
 
@@ -22,7 +10,7 @@ export type DbEntity = {
 export interface PaginatedReponse<T extends {}> {
   items: Array<T & DbEntity>;
   page: number;
-  pageCount: number;
+  pageSize: number;
 }
 
 export const create = async <T extends {}>(
@@ -58,15 +46,16 @@ export const findPaginated = async <T extends {}>(
     limit: count,
     skip: page * count
   });
+  const items = docs.map(n => ({
+    ...n,
+    id: n._id,
+    creationDate: new Date(n.creationDate)
+  }));
 
   return {
-    items: docs.map(n => ({
-      ...n,
-      id: n._id,
-      creationDate: new Date(n.creationDate)
-    })),
+    items,
     page,
-    pageCount: count
+    pageSize: items.length
   };
 };
 

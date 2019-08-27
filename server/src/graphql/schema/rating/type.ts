@@ -2,7 +2,9 @@ import { Field, Int, ObjectType, ID, InputType } from "type-graphql";
 import { User } from "../user/type";
 import { PaginatedResponse } from "../util";
 import { Restaurant } from "../restaurant/type";
-import { Min, Max } from "class-validator";
+import { Min, Max, MinLength } from "class-validator";
+import { PersistedRestaurant } from "../../persistence/restaurants";
+import { PersistedUser } from "../../persistence/user";
 
 @ObjectType()
 export class Rating {
@@ -24,10 +26,10 @@ export class Rating {
   creationDate: Date;
 
   @Field(() => User)
-  user: User;
+  user: PersistedUser;
 
   @Field(() => Restaurant)
-  restaurant: Restaurant;
+  restaurant: PersistedRestaurant;
 }
 
 @ObjectType()
@@ -36,6 +38,7 @@ export class RatingsResponse extends PaginatedResponse(Rating) {}
 @InputType()
 export class CreateRatingInput {
   @Field(() => String)
+  @MinLength(8, { message: "Title should have at least 8 characters" })
   title: string;
 
   @Field(() => String, { nullable: true })

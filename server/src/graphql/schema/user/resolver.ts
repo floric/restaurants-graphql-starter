@@ -1,22 +1,35 @@
-import { Arg, FieldResolver, Query, Resolver, Root } from "type-graphql";
-import { Rating } from "../rating/type";
+import {
+  Arg,
+  FieldResolver,
+  Query,
+  Resolver,
+  Root,
+  Args,
+  ResolverInterface
+} from "type-graphql";
+import { RatingsResponse } from "../rating/type";
 import { User } from "./type";
+import { fetchUserById, PersistedUser } from "../../persistence/user";
+import { fetchRatingsForUser } from "../../persistence/ratings";
+import { PaginatedListInput } from "../util";
 
 @Resolver(() => User)
-export class UserResolver {
-    private readonly items: User[] = [];
+export class UserResolver implements ResolverInterface<User & PersistedUser> {
+  @Query(() => User, { nullable: true })
+  user(@Arg("id") id: string) {
+    return fetchUserById(id);
+  }
 
-    @Query(() => User, { nullable: true })
-    public async user(
-        @Arg("id") id: string
-    ): Promise<User | undefined> {
-        return await this.items.find(a => a.id === id);
-    }
+  @FieldResolver()
+  registrationDate(@Root() { creationDate }: PersistedUser) {
+    return creationDate;
+  }
 
-    @FieldResolver(() => [Rating])
-    public ratings(
-        @Root() _: User
-    ): Rating[] {
-        return [];
-    }
+  @FieldResolver(() => RatingsResponse)
+  ratings(
+    @Root() { id }: User,
+    @Args() { page, pageSize }: PaginatedListInput
+  ) {
+    return fetchRatingsForUser(id, page, pageSize);
+  }
 }

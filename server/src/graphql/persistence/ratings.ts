@@ -23,6 +23,18 @@ export const fetchRatingsForRestaurant = (
     selector: { restaurantId }
   });
 
+export const fetchRatingsForUser = (
+  userId: string,
+  page: number,
+  count: number
+) =>
+  findPaginated<PersistedRating>({
+    type: "rating",
+    page,
+    count,
+    selector: { userId }
+  });
+
 export const fetchAvgRatingForRestaurant = (_: string) => 4.5;
 
 type CreateRatingArgs = {
