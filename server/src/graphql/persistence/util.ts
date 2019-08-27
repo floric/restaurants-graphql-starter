@@ -1,9 +1,22 @@
-import { getDb } from "./db";
+import PouchDB from "pouchdb";
+import PouchDBFind from "pouchdb-find";
 
-export type EntityType = "offer" | "rating" | "restaurant";
+const DB_NAME = "localDB";
 
-type DbEntity = {
+PouchDB.plugin(PouchDBFind);
+
+const db = new PouchDB<any>(DB_NAME);
+db.createIndex({ index: { name: "restaurantId", fields: ["restaurantId"] } });
+
+const getDb: <T>() => PouchDB.Database<T> = () => {
+  return db;
+};
+
+export type EntityType = "offer" | "rating" | "restaurant" | "user";
+
+export type DbEntity = {
   id: string;
+  creationDate: Date;
 };
 
 export interface PaginatedReponse<T extends {}> {
@@ -13,15 +26,20 @@ export interface PaginatedReponse<T extends {}> {
 }
 
 export const create = async <T extends {}>(
-  elem: T,
+  elem: Omit<T, keyof DbEntity>,
   type: EntityType
-): Promise<T & DbEntity> => {
-  const { id, ok } = await getDb<T>().post({ type, ...elem });
+) => {
+  const creationDate = new Date();
+  const { id, ok } = await getDb().post({
+    ...elem,
+    type,
+    creationDate: creationDate.toUTCString()
+  });
   if (!ok) {
     throw new Error("Creating object failed");
   }
 
-  return { id, ...elem };
+  return { ...elem, id, creationDate };
 };
 
 type PaginationOptions = {
@@ -35,7 +53,7 @@ export const findPaginated = async <T extends {}>(
   options: PaginationOptions
 ) => {
   const { type, selector, count = 20, page = 0 } = options;
-  const { docs } = await getDb<T>().find({
+  const { docs } = await getDb<T & DbEntity>().find({
     selector: { ...(selector || {}), type },
     limit: count,
     skip: page * count
@@ -43,8 +61,9 @@ export const findPaginated = async <T extends {}>(
 
   return {
     items: docs.map(n => ({
+      ...n,
       id: n._id,
-      ...n
+      creationDate: new Date(n.creationDate)
     })),
     page,
     pageCount: count
@@ -55,7 +74,12 @@ export const getById: <T extends {}>(
   id: string
 ) => Promise<(T & DbEntity) | null> = async <T>(id: string) => {
   try {
-    return getDb<T>().get(id);
+    const result = await getDb<T & DbEntity>().get(id);
+    return {
+      ...result,
+      id: result._id,
+      creationDate: new Date(result.creationDate)
+    };
   } catch (err) {
     return null;
   }

@@ -18,7 +18,8 @@ import {
 import {
   fetchRestaurants,
   findRestaurantByTitle,
-  createRestaurant
+  createRestaurant,
+  PersistedRestaurant
 } from "../../persistence/restaurants";
 import { fetchOffersForRestaurant } from "../../persistence/offer";
 import { RatingsResponse, Rating } from "../rating/type";
@@ -26,7 +27,8 @@ import { OffersResponse } from "../offer/type";
 import { PaginatedListInput } from "../util";
 
 @Resolver(() => Restaurant)
-export class RestaurantResolver implements ResolverInterface<Restaurant> {
+export class RestaurantResolver
+  implements ResolverInterface<Restaurant & PersistedRestaurant> {
   @Query(() => Restaurant, { nullable: true })
   async restaurant(@Arg("title") title: string) {
     return plainToClass(Restaurant, findRestaurantByTitle(title));
@@ -43,7 +45,7 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
 
   @FieldResolver(() => RatingsResponse)
   async ratings(
-    @Root() restaurant: Restaurant,
+    @Root() restaurant: PersistedRestaurant,
     @Args() { page, pageSize }: PaginatedListInput
   ) {
     const { items } = await fetchRatingsForRestaurant(
@@ -59,7 +61,7 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
 
   @FieldResolver(() => OffersResponse)
   async offers(
-    @Root() restaurant: Restaurant,
+    @Root() restaurant: PersistedRestaurant,
     @Args() { page, pageSize }: PaginatedListInput
   ) {
     const { items } = await fetchOffersForRestaurant(
@@ -74,7 +76,7 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
   }
 
   @FieldResolver()
-  averageRating(@Root() restaurant: Restaurant) {
+  averageRating(@Root() restaurant: PersistedRestaurant) {
     return fetchAvgRatingForRestaurant(restaurant.id);
   }
 

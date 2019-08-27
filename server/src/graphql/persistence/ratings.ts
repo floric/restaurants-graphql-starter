@@ -1,13 +1,12 @@
-import { findPaginated, getById, create } from "./util";
+import { findPaginated, getById, create, DbEntity } from "./util";
 
 export type PersistedRating = {
   restaurantId: string;
   title: string;
   description?: string;
   value: number;
-  creationDate: Date;
   userId: string;
-};
+} & DbEntity;
 
 export const fetchRatingById = (ratingId: string) =>
   getById<PersistedRating>(ratingId);
@@ -40,15 +39,14 @@ export const createRating = ({
   value,
   restaurantId,
   userId
-}: CreateRatingArgs) => {
-  const rating: PersistedRating = {
-    title,
-    description,
-    value,
-    restaurantId,
-    userId,
-    creationDate: new Date()
-  };
-
-  return create<PersistedRating>(rating, "rating");
-};
+}: CreateRatingArgs) =>
+  create<PersistedRating>(
+    {
+      title,
+      description,
+      value,
+      restaurantId,
+      userId
+    },
+    "rating"
+  );

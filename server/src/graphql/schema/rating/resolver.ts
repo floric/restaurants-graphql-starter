@@ -10,28 +10,33 @@ import {
 import { User } from "../user/type";
 import { Rating, CreateRatingInput } from "./type";
 import { fetchUserById } from "../../persistence/user";
-import { fetchRatingById, createRating } from "../../persistence/ratings";
+import {
+  fetchRatingById,
+  createRating,
+  PersistedRating
+} from "../../persistence/ratings";
 import { plainToClass } from "class-transformer";
 import { Restaurant } from "../restaurant/type";
 import { findRestaurantById } from "../../persistence/restaurants";
 
 @Resolver(() => Rating)
-export class RatingResolver implements ResolverInterface<Rating> {
+export class RatingResolver
+  implements ResolverInterface<Rating & PersistedRating> {
   @Query(() => Rating, { nullable: true })
   async rating(@Arg("id") id: string) {
     return plainToClass(Rating, await fetchRatingById(id));
   }
 
   @FieldResolver()
-  async user(@Root() rating: Rating) {
-    return plainToClass(User, await fetchUserById(rating.user.id));
+  async user(@Root() rating: PersistedRating) {
+    return plainToClass(User, await fetchUserById(rating.userId));
   }
 
   @FieldResolver()
-  async restaurant(@Root() rating: Rating) {
+  async restaurant(@Root() rating: PersistedRating) {
     return plainToClass(
       Restaurant,
-      await findRestaurantById(rating.restaurant.id)
+      await findRestaurantById(rating.restaurantId)
     );
   }
 

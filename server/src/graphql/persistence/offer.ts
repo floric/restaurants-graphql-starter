@@ -1,12 +1,11 @@
-import { findPaginated, getById, create } from "./util";
-import { CreateOfferInput } from "../schema/offer/type";
+import { getById, findPaginated, create } from "./util";
 
 export type PersistedOffer = {
   title: string;
   description: string;
   validUntilDate: Date;
-  creationDate: Date;
   restaurantId: string;
+  userId: string;
 };
 
 export const fetchOfferById = (ratingId: string) =>
@@ -24,19 +23,28 @@ export const fetchOffersForRestaurant = (
     selector: { restaurantId }
   });
 
+type CreateOfferArgs = {
+  title: string;
+  description: string;
+  restaurantId: string;
+  validUntilDate: Date;
+  userId: string;
+};
+
 export const createOffer = ({
   title,
   description,
   restaurantId,
-  validUntilDate
-}: CreateOfferInput) => {
-  const offer: PersistedOffer = {
-    title,
-    description,
-    validUntilDate,
-    restaurantId,
-    creationDate: new Date()
-  };
-
-  return create<PersistedOffer>(offer, "offer");
-};
+  validUntilDate,
+  userId
+}: CreateOfferArgs) =>
+  create<PersistedOffer>(
+    {
+      title,
+      description,
+      validUntilDate,
+      restaurantId,
+      userId
+    },
+    "offer"
+  );
