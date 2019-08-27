@@ -28,14 +28,12 @@ import { PaginatedListInput } from "../util";
 @Resolver(() => Restaurant)
 export class RestaurantResolver implements ResolverInterface<Restaurant> {
   @Query(() => Restaurant, { nullable: true })
-  public async restaurant(
-    @Arg("title") title: string
-  ): Promise<Restaurant | undefined> {
+  async restaurant(@Arg("title") title: string) {
     return plainToClass(Restaurant, findRestaurantByTitle(title));
   }
 
   @Query(() => RestaurantResponse)
-  public async restaurants(): Promise<RestaurantResponse> {
+  async restaurants() {
     const { items } = await fetchRestaurants();
     return {
       items: items.map(n => plainToClass(Restaurant, n)),
@@ -44,10 +42,10 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
   }
 
   @FieldResolver(() => RatingsResponse)
-  public async ratings(
+  async ratings(
     @Root() restaurant: Restaurant,
     @Args() { page, pageSize }: PaginatedListInput
-  ): Promise<RatingsResponse> {
+  ) {
     const { items } = await fetchRatingsForRestaurant(
       restaurant.id,
       page,
@@ -60,10 +58,10 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
   }
 
   @FieldResolver(() => OffersResponse)
-  public async offers(
+  async offers(
     @Root() restaurant: Restaurant,
     @Args() { page, pageSize }: PaginatedListInput
-  ): Promise<RatingsResponse> {
+  ) {
     const { items } = await fetchOffersForRestaurant(
       restaurant.id,
       page,
@@ -76,14 +74,16 @@ export class RestaurantResolver implements ResolverInterface<Restaurant> {
   }
 
   @FieldResolver()
-  public averageRating(@Root() restaurant: Restaurant): number {
+  averageRating(@Root() restaurant: Restaurant) {
     return fetchAvgRatingForRestaurant(restaurant.id);
   }
 
   @Mutation(() => Restaurant)
-  public createRestaurant(
-    @Arg("createInput") createInput: CreateRestaurantInput
-  ) {
-    return createRestaurant(createInput);
+  createRestaurant(@Arg("createInput")
+  {
+    title,
+    description
+  }: CreateRestaurantInput) {
+    return createRestaurant({ title, description, userId: "" });
   }
 }

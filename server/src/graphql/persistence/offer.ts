@@ -1,9 +1,11 @@
-import { findPaginated, getById } from "./util";
+import { findPaginated, getById, create } from "./util";
+import { CreateOfferInput } from "../schema/offer/type";
 
 export type PersistedOffer = {
   title: string;
   description: string;
   validUntilDate: Date;
+  creationDate: Date;
   restaurantId: string;
 };
 
@@ -21,3 +23,20 @@ export const fetchOffersForRestaurant = (
     count,
     selector: { restaurantId }
   });
+
+export const createOffer = ({
+  title,
+  description,
+  restaurantId,
+  validUntilDate
+}: CreateOfferInput) => {
+  const offer: PersistedOffer = {
+    title,
+    description,
+    validUntilDate,
+    restaurantId,
+    creationDate: new Date()
+  };
+
+  return create<PersistedOffer>(offer, "offer");
+};

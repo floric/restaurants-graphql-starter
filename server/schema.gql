@@ -3,6 +3,13 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input CreateRatingInput {
+  title: String!
+  description: String
+  value: Int!
+  restaurantId: String!
+}
+
 input CreateRestaurantInput {
   title: String!
   description: String
@@ -15,6 +22,7 @@ scalar DateTime
 
 type Mutation {
   createRestaurant(createInput: CreateRestaurantInput!): Restaurant!
+  createRating(createInput: CreateRatingInput!): Rating!
 }
 
 type Offer {

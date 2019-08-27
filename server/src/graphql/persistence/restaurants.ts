@@ -2,7 +2,11 @@ import { v4 as generateUuid } from "uuid";
 import faker from "faker";
 import { findPaginated, getById, create } from "./util";
 
-export type PersistedRestaurant = { title: string; description?: string };
+export type PersistedRestaurant = {
+  title: string;
+  description?: string;
+  userId: string;
+};
 
 export const fetchRestaurants = () =>
   findPaginated<PersistedRestaurant>({ type: "restaurant" });
@@ -17,5 +21,21 @@ export const findRestaurantByTitle = (title: string) => ({
 export const findRestaurantById = (restaurantId: string) =>
   getById<PersistedRestaurant>(restaurantId);
 
-export const createRestaurant = (restaurant: PersistedRestaurant) =>
-  create<PersistedRestaurant>(restaurant, "restaurant");
+type CreateRestaurantArgs = {
+  title: string;
+  description?: string;
+  userId: string;
+};
+
+export const createRestaurant = ({
+  title,
+  description,
+  userId
+}: CreateRestaurantArgs) => {
+  const restaurant: PersistedRestaurant = {
+    title,
+    description,
+    userId
+  };
+  return create<PersistedRestaurant>(restaurant, "restaurant");
+};

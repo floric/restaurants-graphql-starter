@@ -4,26 +4,43 @@ import {
   Query,
   Resolver,
   Root,
-  ResolverInterface
+  ResolverInterface,
+  Mutation
 } from "type-graphql";
-import { Offer } from "./type";
+import { Offer, CreateOfferInput } from "./type";
 import { plainToClass } from "class-transformer";
 import { Restaurant } from "../restaurant/type";
 import { findRestaurantById } from "../../persistence/restaurants";
-import { fetchOfferById } from "../../persistence/offer";
+import { fetchOfferById, createOffer } from "../../persistence/offer";
 
 @Resolver(() => Offer)
 export class OfferResolver implements ResolverInterface<Offer> {
   @Query(() => Offer, { nullable: true })
-  public async offer(@Arg("id") id: string): Promise<Offer | undefined> {
+  async offer(@Arg("id") id: string) {
     return plainToClass(Offer, await fetchOfferById(id));
   }
 
   @FieldResolver()
-  public async restaurant(@Root() offer: Offer): Promise<Restaurant> {
+  async restaurant(@Root() offer: Offer) {
     return plainToClass(
       Restaurant,
       await findRestaurantById(offer.restaurant.id)
     );
+  }
+
+  @Mutation(() => Offer)
+  createOffer(@Arg("createInput")
+  {
+    title,
+    description,
+    validUntilDate,
+    restaurantId
+  }: CreateOfferInput) {
+    return createOffer({
+      title,
+      description,
+      validUntilDate,
+      restaurantId
+    });
   }
 }
