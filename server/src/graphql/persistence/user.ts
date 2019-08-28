@@ -6,7 +6,13 @@ export type PersistedUser = {
   lastName: string;
 } & DbEntity;
 
-export const fetchUserById = (userId: string) => getById<PersistedUser>(userId);
+export const fetchUserById = async (userId: string) => {
+  if (userId === SYSTEM_USER.id) {
+    return SYSTEM_USER;
+  }
+
+  return await getById<PersistedUser>(userId);
+};
 
 type CreateRestaurantArgs = {
   userName: string;
@@ -27,3 +33,11 @@ export const createUser = ({
     },
     "user"
   );
+
+export const SYSTEM_USER: PersistedUser = {
+  userName: "system",
+  firstName: "Super",
+  lastName: "User",
+  creationDate: new Date(),
+  id: "system"
+};

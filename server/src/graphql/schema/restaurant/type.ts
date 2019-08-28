@@ -28,7 +28,7 @@ export class RestaurantResponse extends PaginatedResponse(Restaurant) {}
 @InputType()
 export class CreateRestaurantInput {
   @Field(() => String)
-  @MinLength(8, { message: "Title should have at least 8 characters" })
+  @MinLength(3, { message: "Title should have at least 3 characters" })
   title: string;
 
   @Field(() => String, { nullable: true })

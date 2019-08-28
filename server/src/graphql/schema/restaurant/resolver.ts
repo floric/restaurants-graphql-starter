@@ -16,26 +16,33 @@ import {
 } from "../../persistence/ratings";
 import {
   fetchRestaurants,
-  findRestaurantByTitle,
   createRestaurant,
-  PersistedRestaurant
+  PersistedRestaurant,
+  findRestaurantById
 } from "../../persistence/restaurants";
 import { fetchOffersForRestaurant } from "../../persistence/offer";
 import { RatingsResponse } from "../rating/type";
 import { OffersResponse } from "../offer/type";
 import { PaginatedListInput } from "../util";
+import { SYSTEM_USER } from "../../persistence/user";
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver
   implements ResolverInterface<Restaurant & PersistedRestaurant> {
   @Query(() => Restaurant, { nullable: true })
-  restaurant(@Arg("title") title: string) {
-    return findRestaurantByTitle(title);
+  restaurant(@Arg("id") id: string) {
+    return findRestaurantById(id);
   }
 
   @Query(() => RestaurantResponse)
   restaurants() {
     return fetchRestaurants();
+  }
+
+  @Query(() => Restaurant, { nullable: true })
+  async recommendation() {
+    const latest = await fetchRestaurants();
+    return latest.items[Math.floor(Math.random() * latest.pageSize - 1)];
   }
 
   @FieldResolver(() => RatingsResponse)
@@ -65,6 +72,6 @@ export class RestaurantResolver
     title,
     description
   }: CreateRestaurantInput) {
-    return createRestaurant({ title, description, userId: "" });
+    return createRestaurant({ title, description, userId: SYSTEM_USER.id });
   }
 }

@@ -8,7 +8,7 @@ import {
   Mutation
 } from "type-graphql";
 import { Rating, CreateRatingInput } from "./type";
-import { fetchUserById } from "../../persistence/user";
+import { fetchUserById, SYSTEM_USER } from "../../persistence/user";
 import {
   fetchRatingById,
   createRating,
@@ -55,7 +55,7 @@ export class RatingResolver
       description,
       value,
       restaurantId,
-      userId: ""
+      userId: SYSTEM_USER.id
     });
   }
 }

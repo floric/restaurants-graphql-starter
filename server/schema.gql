@@ -46,8 +46,9 @@ type OffersResponse {
 }
 
 type Query {
-  restaurant(title: String!): Restaurant
+  restaurant(id: String!): Restaurant
   restaurants: RestaurantResponse!
+  recommendation: Restaurant
   rating(id: String!): Rating
   user(id: String!): User
   offer(id: String!): Offer

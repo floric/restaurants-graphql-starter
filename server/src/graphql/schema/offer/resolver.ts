@@ -14,6 +14,7 @@ import {
   createOffer,
   PersistedOffer
 } from "../../persistence/offer";
+import { SYSTEM_USER } from "../../persistence/user";
 
 @Resolver(() => Offer)
 export class OfferResolver
@@ -43,7 +44,7 @@ export class OfferResolver
       title,
       description,
       restaurantId,
-      userId: ""
+      userId: SYSTEM_USER.id
     });
   }
 }
