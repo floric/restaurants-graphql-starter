@@ -23,10 +23,11 @@
     "@types/uuid": "^3.4.5",
     "pino-pretty": "^3.2.1",
     "reflect-metadata": "^0.1.13",
+    "ts-node-dev": "^1.0.0-pre.42",
     "typescript": "^3.5.3"
   },
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "ts-node-dev --project ./tsconfig.json --transpileOnly ./src/index.ts",
     "clear-db": "rm -rf localDB*",
     "build": "tsc"
   }

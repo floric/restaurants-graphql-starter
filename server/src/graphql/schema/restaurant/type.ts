@@ -19,9 +19,7 @@ export class Restaurant {
   creationDate: Date;
 
   @Field(() => Float, { nullable: true })
-  get averageRating(): number | null {
-    return 3.53;
-  }
+  averageRating: number | null;
 }
 
 @ObjectType()

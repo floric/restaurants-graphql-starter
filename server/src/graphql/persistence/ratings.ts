@@ -1,4 +1,5 @@
 import { findPaginated, getById, create, DbEntity } from "./util";
+import { getDb } from "./db";
 
 export type PersistedRating = {
   restaurantId: string;
@@ -35,7 +36,13 @@ export const fetchRatingsForUser = (
     selector: { userId }
   });
 
-export const fetchAvgRatingForRestaurant = (_: string) => 4.5;
+export const fetchAvgRatingForRestaurant = async (restaurantId: string) => {
+  const { docs } = await getDb<PersistedRating & DbEntity>().find({
+    selector: { restaurantId, type: "rating" }
+  });
+  const sum = docs.map(r => r.value).reduce((a, b) => a + b);
+  return sum / docs.length;
+};
 
 type CreateRatingArgs = {
   title: string;
