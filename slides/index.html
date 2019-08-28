@@ -48,7 +48,7 @@ Ein Bindeglied mit großem Potenzial
 
 1. Ankommen
 1. Einordnen
-	* REST, gRPC, OData
+	* REST
 1. Kennenlernen
 	* Schema
 	* Queries
@@ -148,7 +148,7 @@ Ein Bindeglied mit großem Potenzial
 ### Mögliche Lösung mit HATEOAS
 #### (Hypermedia As The Engine Of Application State)
 
-* Einzelner Endpunkt
+* Einzelner Endpunkt als Einstiegspunkt
 * Abbildung von Relationen und Aktionen über **Links**
 
 ```json
@@ -228,6 +228,16 @@ Navigiere zu *restaurant* mit: `{ "id": "123"}`
 					</textarea
             >
           </section>
+          <section data-markdown>
+            <textarea data-template>
+### Geht es noch besser?
+
+* Verkettete Requests
+* Sammeln von Information von verschiedenen Endpunkten verschiender Services
+* Entwicklung eines Clients notwendig, da sich Formate oft unterscheiden
+					</textarea
+            >
+          </section>
         </section>
         <section>
           <section data-markdown>
@@ -236,12 +246,21 @@ Navigiere zu *restaurant* mit: `{ "id": "123"}`
 
 * Typisierte API-Abfragefragesprache (inkl. Modifikation...) und Ökosystem
 * entwickelt von Facebook, 2015 opensourced, seitdem verwaltet durch GraphQL Foundation
-* Zugriff auf Inhalte über einen einzigen Endpunkt
+* Zugriff auf Inhalte über einen einzigen Endpunkt (idealerweise über alle verfügbaren Services!)
 * Umfasst auch Validierung der Eingaben sowie Umgang mit Fehlern
 * Rückgabeformat und Transportmittel nicht definiert
 
 Spec: https://graphql.github.io/graphql-spec/
 			</textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+### Prinzipien
+* Beschreibung und Versionierung der API mit einem Schema
+* Formulierung einer hierarchisch aufgebauten Query basierend auf diesem Schema
+* Fokus auf leichter und passender Verwendbarkeit aus Sicht des Clients
+    </textarea
             >
           </section>
           <section data-markdown>
@@ -401,6 +420,31 @@ mit Payload:
 	</textarea
             >
           </section>
+          <section data-markdown>
+            <textarea data-template>
+  ## Subscriptions
+  * Dient dem Senden von Events an Client
+  * In der Regel über Websockets oder SSE, aber Spezifikation ist transportagnostisch
+    </textarea
+            >
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+## Action!
+* Vorstellung eines Beispiels
+  * Queries und Mutations
+  * Resolver
+  * Introspection
+* Implementierung
+  * Umgebung: NodeJS
+  * Server: Fastify
+  * SPA-Client: React
+  * GQL-Server: Apollo Server
+  * GQL-Client: Apollo Client
+  * Datenbank: PouchDB
+      </textarea
+            >
+          </section>
         </section>
         <section>
           <section>
@@ -419,9 +463,12 @@ mit Payload:
                 >
               </li>
               <li>
-                Deep, nested Queries
+                Verschachtelte Anfragen führen zu vielen DB-Requests
                 <span class="fragment" data-fragment-index="4"
-                  >→ <b>Komplexitätsgrenzen oder Timeouts</b></span
+                  >→
+                  <b
+                    >Dataloader sowie Komplexitätsgrenzen oder Timeouts</b
+                  ></span
                 >
               </li>
               <li>
@@ -439,17 +486,34 @@ mit Payload:
             <h2>Kein Swiss Army Knife!</h2>
             <ul>
               <li class="fragment">
-                Nicht empfehlenswert bei Server-Server-Kommunikation
-                (Microservices)
+                Kein Mehrwert bei Server-Server-Kommunikation mit klaren
+                Aufgaben (Microservices)
               </li>
               <li class="fragment">
                 Relativ junge Technologie erfordert Mut und ein wenig
                 Risikobereitschaft
               </li>
               <li class="fragment">
-                Server-Implementierung außerhalb der NodeJS-Welt weniger erprobt
+                Server-Implementierungen außerhalb der NodeJS-Welt weniger
+                erprobt
               </li>
               <li class="fragment">Single Point of Failure</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Fazit</h2>
+            <ul>
+              <li class="fragment">
+                Don't jump on the (already passed?) hype train!
+              </li>
+              <li class="fragment">Tooling kennenlernen</li>
+              <li class="fragment">
+                Start mit clientgetriebenen Neuentwicklungen, bei denen das
+                Entitätsmodell langsam mitwächst
+              </li>
+              <li class="fragment">
+                Erwägung bei Konsolidierung isolierter REST-APIs eines Produkts
+              </li>
             </ul>
           </section>
         </section>
@@ -479,10 +543,11 @@ mit Payload:
       Reveal.initialize({
         hash: true,
         history: true,
-        display: "block",
         dependencies: [
           { src: "plugin/markdown/marked.js" },
           { src: "plugin/markdown/markdown.js" },
+          // Zoom in and out with Alt+click
+          { src: "plugin/zoom-js/zoom.js", async: true },
           { src: "plugin/notes/notes.js", async: true },
           { src: "plugin/highlight/highlight.js", async: true }
         ]
