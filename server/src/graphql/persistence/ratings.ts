@@ -40,7 +40,7 @@ export const fetchAvgRatingForRestaurant = async (restaurantId: string) => {
   const { docs } = await getDb<PersistedRating & DbEntity>().find({
     selector: { restaurantId, type: "rating" }
   });
-  const sum = docs.map(r => r.value).reduce((a, b) => a + b);
+  const sum = docs.map(r => r.value).reduce((a, b) => a + b, 0);
   return sum / docs.length;
 };
 

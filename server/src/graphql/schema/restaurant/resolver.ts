@@ -42,7 +42,7 @@ export class RestaurantResolver
   @Query(() => Restaurant, { nullable: true })
   async recommendation() {
     const latest = await fetchRestaurants();
-    return latest.items[Math.floor(Math.random() * latest.pageSize - 1)];
+    return latest.items[Math.floor(Math.random() * (latest.pageSize - 1))];
   }
 
   @FieldResolver(() => RatingsResponse)

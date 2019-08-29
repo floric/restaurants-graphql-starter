@@ -38,8 +38,12 @@ export const RestaurantOverview = () => {
 
   return (
     <>
-      <PageHeader>Random Recommendation</PageHeader>
-      <Link to={`/restaurants/${recommendation!.id}`}>I feel lucky</Link>
+      {recommendation != null && (
+        <>
+          <PageHeader>Random Recommendation</PageHeader>
+          <Link to={`/restaurants/${recommendation!.id}`}>I feel lucky</Link>
+        </>
+      )}
       <PageHeader>Nearby</PageHeader>
       <Spacer />
       <Row>

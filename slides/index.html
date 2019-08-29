@@ -240,19 +240,35 @@ Navigiere zu *restaurant* mit: `{ "id": "123"}`
           </section>
         </section>
         <section>
-          <section data-markdown>
-            <textarea data-template>
-## Einführung in GraphQL
+          <section>
+            <h2>Einführung in GraphQL</h2>
+            <ul>
+              <li class="fragment">
+                Typisierte API-Abfragefragesprache (inkl. Modifikation...) und
+                Ökosystem
+              </li>
+              <li class="fragment">
+                entwickelt von Facebook, 2015 opensourced, seitdem verwaltet
+                durch GraphQL Foundation
+              </li>
+              <li class="fragment">
+                Zugriff auf Inhalte über einen einzigen Endpunkt (idealerweise
+                über alle verfügbaren Services!)
+              </li>
+              <li class="fragment">
+                Umfasst auch Validierung der Eingaben sowie Umgang mit Fehlern
+              </li>
+              <li class="fragment">
+                Rückgabeformat und Transportmittel nicht definiert
+              </li>
+            </ul>
 
-* Typisierte API-Abfragefragesprache (inkl. Modifikation...) und Ökosystem
-* entwickelt von Facebook, 2015 opensourced, seitdem verwaltet durch GraphQL Foundation
-* Zugriff auf Inhalte über einen einzigen Endpunkt (idealerweise über alle verfügbaren Services!)
-* Umfasst auch Validierung der Eingaben sowie Umgang mit Fehlern
-* Rückgabeformat und Transportmittel nicht definiert
-
-Spec: https://graphql.github.io/graphql-spec/
-			</textarea
-            >
+            <p class="fragment">
+              Spec:
+              <a href="https://graphql.github.io/graphql-spec/"
+                >https://graphql.github.io/graphql-spec/</a
+              >
+            </p>
           </section>
           <section data-markdown>
             <textarea data-template>
@@ -420,6 +436,31 @@ mit Payload:
 	</textarea
             >
           </section>
+          <section>
+            <h3>Noch mehr Schema-Optionen</h3>
+            <ul>
+              <li class="fragment">
+                <strong>Aliases</strong> für Benennungskonflikte
+              </li>
+              <li class="fragment">
+                Gruppierung von abzufragenden Feldern mit
+                <strong>Fragments</strong>
+              </li>
+              <li class="fragment">
+                Bedingte Queries mit <strong>Directives (include/skip)</strong>
+              </li>
+              <li class="fragment">
+                <strong>Meta Fields</strong> um Inhalte bei Interfaces
+                abzufragen
+              </li>
+            </ul>
+            <p class="fragment">
+              Details:
+              <a href="https://graphql.org/learn/queries/"
+                >https://graphql.org/learn/queries/</a
+              >
+            </p>
+          </section>
           <section data-markdown>
             <textarea data-template>
   ## Subscriptions
@@ -518,10 +559,8 @@ mit Payload:
           </section>
         </section>
         <section>
-          <section data-markdown>
-            <textarea data-template>
-## Zeit für Fragen.
-            </textarea>
+          <section>
+            <h2>Zeit für Fragen</h2>
           </section>
           <section data-markdown>
             <textarea data-template>

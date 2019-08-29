@@ -29,7 +29,7 @@ const client = new ApolloClient({
 });
 
 const GlobalStyle = createGlobalStyle`
-  a, p, input, li, ul {
+  a, p, input, textarea, li, ul {
     font-family: 'Source Sans Pro', sans-serif;
   }
   h1, h2, h3, h4, h5 {

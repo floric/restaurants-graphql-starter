@@ -21,7 +21,7 @@ export const RestaurantCard: FC<RestaurantCardProps> = ({
       )}
     </p>
     <p>
-      {description.length > 60
+      {description && description.length > 60
         ? `${description.substr(0, 57)}...`
         : description}
     </p>

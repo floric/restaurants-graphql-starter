@@ -9,6 +9,7 @@ import gql from "graphql-tag";
 import { InputAdapter, Label } from "../base/Input";
 import { Row, Col } from "../base/Grid";
 import { SelectAdapter } from "../base/Select";
+import { Spacer } from "../base/Spacer";
 
 const GET_RESTAURANT_WITH_RATINGS = gql`
   query getRestaurant($id: String!) {
@@ -135,9 +136,17 @@ export const CreateRatingForm: FC<{ restaurantId: string }> = ({
               </Field>
             </Col>
           </Row>
-          <Button type="submit" loading={submitting} disabled={pristine}>
-            Submit
-          </Button>
+          <Row>
+            <Spacer />
+          </Row>
+          <Row>
+            <Col xs={4}></Col>
+            <Col xs={8} fullWidth>
+              <Button type="submit" loading={submitting} disabled={pristine}>
+                Submit
+              </Button>
+            </Col>
+          </Row>
         </StyledEditorForm>
       )}
     />

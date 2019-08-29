@@ -90,7 +90,7 @@ const initDb = async () => {
     index: { name: "restaurantId", fields: ["restaurantId"] }
   });
 
-  await createTestdata();
+  // await createTestdata();
 };
 
 initDb();
